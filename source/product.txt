@@ -1,5 +1,2 @@
-Coke 
-Pepsi 
-Fanta 
-Curry 
-Coke 
+Coke Zero 
+Coffee 

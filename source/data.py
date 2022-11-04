@@ -4,16 +4,21 @@ import csv
 
 product = []
 orders = []
+couriers = []
 orders_fields = ["customer_name", "customer_address", "customer_phone", "status"]
 
 # Opens the saved product data and adds it to be used in program
-with open("e:\MiniProject\miniproject\source\product.txt", "r") as prod:
+with open("product.txt", "r") as prod:
+    for products in prod:
+        product.append(products.strip())
+
+with open("courier.txt", "r") as prod:
     for products in prod:
         product.append(products.strip())
 
 # Opens the saved order data and adds it to be used in program
 try:
-    with open("e:\MiniProject\miniproject\source\orders.csv", "r") as ords:
+    with open("orders.csv", "r") as ords:
         reader = csv.DictReader(ords)
         orders = list(reader)
 
@@ -22,6 +27,7 @@ except:
 
 menu = functions.ProductMenu(product)
 order = functions.OrderMenu(orders)
+courier = functions.CourierMenu(couriers)
 
 # Main Loop for calling the menu
 while True:
@@ -31,6 +37,9 @@ while True:
             os.system("cls")
             menu.menu()
         case 2:
+            os.system("cls")
+            courier.menu()
+        case 3:
             os.system("cls")
             order.menu()
         case 0:
@@ -44,7 +53,11 @@ with open("product.txt", "w") as prod:
     for products in menu.list:
         prod.write(f"{products} \n")
 
-with open("e:\MiniProject\miniproject\source\orders.csv", "w") as ords:
+with open("courier.txt", "w") as cour:
+    for couriers in courier.list:
+        cour.write(f"{couriers} \n")
+
+with open("orders.csv", "w") as ords:
     writer = csv.DictWriter(ords, fieldnames=orders_fields)
     writer.writeheader()
     writer.writerows(order.list)
