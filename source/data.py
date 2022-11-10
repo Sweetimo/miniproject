@@ -5,16 +5,16 @@ import csv
 product = []
 orders = []
 couriers = []
-orders_fields = ["customer_name", "customer_address", "customer_phone", "status"]
+orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status"]
 
 # Opens the saved product data and adds it to be used in program
 with open("product.txt", "r") as prod:
     for products in prod:
         product.append(products.strip())
 
-with open("courier.txt", "r") as prod:
-    for products in prod:
-        product.append(products.strip())
+with open("courier.txt", "r") as cour:
+    for courier in cour:
+        couriers.append(courier.strip())
 
 # Opens the saved order data and adds it to be used in program
 try:
@@ -26,7 +26,7 @@ except:
     print("No order list found")
 
 menu = functions.ProductMenu(product)
-order = functions.OrderMenu(orders)
+order = functions.OrderMenu(orders, couriers)
 courier = functions.CourierMenu(couriers)
 
 # Main Loop for calling the menu

@@ -121,7 +121,7 @@ class CourierMenu():
     def menu(self):
 
         while True:
-            with open("Courier.txt", "w") as Courier_list:
+            with open("courier.txt", "w") as Courier_list:
                 for Couriers in self.list:
                     Courier_list.write(f"{Couriers} \n")
             print("""
@@ -227,13 +227,14 @@ Courier Menu:
 # Class that handles the order menu
 class OrderMenu():
 
-    def __init__(self, order):
+    def __init__(self, order, Courier):
         self.list = order
+        self.clist = Courier
         self.df = pd.read_csv("orders.csv")
 
     def menu(self):
         while True:
-            orders_fields = ["customer_name", "customer_address", "customer_phone", "status"]
+            orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status"]
             with open("e:\MiniProject\miniproject\source\orders.csv", "w") as ords:
                 writer = csv.DictWriter(ords, fieldnames=orders_fields)
                 writer.writeheader()
@@ -296,7 +297,10 @@ Orders Menu:
             os.system("cls")
             order_dictionary["customer_name"] = input("Please enter the name of the customer: \n")
             order_dictionary["customer_address"] = input("Please enter the customers address: \n")
-            order_dictionary["customer_phone"] = input("Please enter the customers phone number: \n")
+            order_dictionary["customer_phone"] = "#" + input("Please enter the customers phone number: \n")
+            for i in range(len(self.clist)):
+                print(f"{i}: {self.clist[i]}")
+            order_dictionary["courier"] = input("Please enter the index number for the courier to use: \n")
             order_dictionary["status"] = "preparing"
             self.list.append(order_dictionary)
             os.system("cls")
