@@ -8,13 +8,17 @@ class ProductMenu():
 
     def __init__(self, product):
         self.list = product
+        self.pdf = pd.read_csv("product.csv")
 
     def menu(self):
 
         while True:
-            with open("e:\MiniProject\miniproject\source\product.txt", "w") as prod:
-                for products in self.list:
-                    prod.write(f"{products} \n")
+            product_fields = ["name", "price"]
+            with open("product.csv", "w") as prod:
+                writer = csv.DictWriter(prod, fieldnames=product_fields)
+                writer.writeheader()
+                writer.writerows(self.list)
+            self.pdf = pd.read_csv("product.csv")
             print("""
 Product Menu:
 0. Return to main menu.
@@ -54,20 +58,34 @@ Product Menu:
                 self.deleteproduct()
 
             elif product_menu_selection == 0:
+                product_fields = ["name", "price"]
+                with open("product.csv", "w") as prod:
+                    writer = csv.DictWriter(prod, fieldnames=product_fields)
+                    writer.writeheader()
+                    writer.writerows(self.list)
+                self.pdf = pd.read_csv("product.csv")
                 break
 
     def showlist(self):
-        for i in range(len(self.list)):
-            print(f"{i}: {self.list[i]}")
+        print(self.pdf.to_string())
         input("Press enter to return")
         os.system("cls")
 
     def addproduct(self):
         while True:
             os.system("cls")
-            self.list.append(input("Please enter the names of the products you sell: \n"))
+            product_dictionary = {}
+            product_dictionary["name"] = input("Please enter the names of the products you sell: \n")
+            product_dictionary["price"] = input("How much does that cost: \n")
+            self.list.append(product_dictionary)
+            product_fields = ["name", "price"]
+            with open("product.csv", "w") as prod:
+                writer = csv.DictWriter(prod, fieldnames=product_fields)
+                writer.writeheader()
+                writer.writerows(self.list)
+            self.pdf = pd.read_csv("product.csv")
             os.system("cls")
-            print(self.list)
+            print(self.pdf.to_string())
             another_product = ""
             while another_product != "y" and another_product != "n":
                 another_product = input("Add another product: y or n:\n").lower()
@@ -76,8 +94,7 @@ Product Menu:
                 return list
 
     def changeproduct(self):
-        for i in range(len(self.list)):
-            print(f"{i}: {self.list[i]}")
+        print(self.pdf.to_string())
         while True:
             if len(self.list) <= 0:
                 print("There are no products")
@@ -91,12 +108,15 @@ Product Menu:
                 print("That product doesn't exit")
                 continue
             else:
-                list[prod_index] = input("What would you like to change this to?: ")
+                for keys in self.list[prod_index].keys():
+                    print(self.list[prod_index][keys])
+                    update = input(f"{keys} What would you like to change this to?\n")
+                    if update != "":
+                        self.list[prod_index][keys] = update
                 return list
 
     def deleteproduct(self):
-        for i in range(len(self.list)):
-            print(f"{i}: {self.list[i]}")
+        print(self.pdf.to_string())
         while True:
             if len(self.list) <= 0:
                 print("There are no products")
@@ -117,13 +137,17 @@ class CourierMenu():
 
     def __init__(self, Courier):
         self.list = Courier
+        self.cdf = pd.read_csv("courier.csv")
 
     def menu(self):
 
         while True:
-            with open("courier.txt", "w") as Courier_list:
-                for Couriers in self.list:
-                    Courier_list.write(f"{Couriers} \n")
+            courier_fields = ["name", "phone"]
+            with open("courier.csv", "w") as cour:
+                writer = csv.DictWriter(cour, fieldnames=courier_fields)
+                writer.writeheader()
+                writer.writerows(self.list)
+            self.cdf = pd.read_csv("courier.csv")
             print("""
 Courier Menu:
 0. Return to main menu.
@@ -163,20 +187,31 @@ Courier Menu:
                 self.deleteCourier()
 
             elif Courier_menu_selection == 0:
+                courier_fields = ["name", "phone"]
+                with open("courier.csv", "w") as cour:
+                    writer = csv.DictWriter(cour, fieldnames=courier_fields)
+                    writer.writeheader()
+                    writer.writerows(self.list)
+                self.cdf = pd.read_csv("courier.csv")
                 break
 
     def showlist(self):
-        for i in range(len(self.list)):
-            print(f"{i}: {self.list[i]}")
+        print(self.cdf.to_string())
         input("Press enter to return")
         os.system("cls")
 
     def addCourier(self):
         while True:
-            os.system("cls")
-            self.list.append(input("Please enter the names of the Couriers you use: \n"))
-            os.system("cls")
-            print(self.list)
+            courier_dictionary = {}
+            courier_dictionary["name"] = input("Please enter the names of the courier: \n")
+            courier_dictionary["phone"] ="#" + input("What is their phone number: \n")
+            self.list.append(courier_dictionary)
+            courier_fields = ["name", "phone"]
+            with open("courier.csv", "w") as cour:
+                writer = csv.DictWriter(cour, fieldnames=courier_fields)
+                writer.writeheader()
+                writer.writerows(self.list)
+            self.cdf = pd.read_csv("courier.csv")
             another_Courier = ""
             while another_Courier != "y" and another_Courier != "n":
                 another_Courier = input("Add another Courier: y or n:\n").lower()
@@ -185,8 +220,7 @@ Courier Menu:
                 return list
 
     def changeCourier(self):
-        for i in range(len(self.list)):
-            print(f"{i}: {self.list[i]}")
+        print(self.cdf.to_string())
         while True:
             if len(self.list) <= 0:
                 print("There are no Couriers")
@@ -200,12 +234,15 @@ Courier Menu:
                 print("That Courier doesn't exit")
                 continue
             else:
-                list[Courier_index] = input("What would you like to change this to?: ")
+                for keys in self.list[Courier_index].keys():
+                    print(self.list[Courier_index][keys])
+                    update = input(f"{keys} What would you like to change this to?\n")
+                    if update != "":
+                        self.list[Courier_index][keys] = update
                 return list
 
     def deleteCourier(self):
-        for i in range(len(self.list)):
-            print(f"{i}: {self.list[i]}")
+        print(self.cdf.to_string())
         while True:
             if len(self.list) <= 0:
                 print("There are no Couriers")
@@ -227,19 +264,23 @@ Courier Menu:
 # Class that handles the order menu
 class OrderMenu():
 
-    def __init__(self, order, Courier):
+    def __init__(self, order, courier):
         self.list = order
-        self.clist = Courier
+        self.clist = courier
+        self.pdf = pd.read_csv("product.csv")
+        self.cdf = pd.read_csv("courier.csv")
         self.df = pd.read_csv("orders.csv")
 
     def menu(self):
         while True:
-            orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status"]
+            orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
             with open("e:\MiniProject\miniproject\source\orders.csv", "w") as ords:
                 writer = csv.DictWriter(ords, fieldnames=orders_fields)
                 writer.writeheader()
                 writer.writerows(self.list)
-            self.df = pd.read_csv("e:\MiniProject\miniproject\source\orders.csv")
+            self.df = pd.read_csv("orders.csv")
+            self.pdf = pd.read_csv("product.csv")
+            self.cdf = pd.read_csv("courier.csv")
             print("""
 Orders Menu:
 0. Return to main menu.
@@ -287,23 +328,108 @@ Orders Menu:
                 break
 
     def showlist(self):
-        print(self.df.to_string())
-        input("Press enter to return")
-        os.system("cls")
+        status_list = ["preparing", "Out of the Oven", "On it's way", "Delivered"]        
+        while True:
+            print("""
+Orders Menu:
+0. Return to main menu.
+1. Show all orders.
+2. Show orders by courier.
+3. Show orders by status.
+                """)
+            menu_selection = input()
+            try:
+                int(menu_selection)
+
+            except ValueError:
+                print("That was an invalid selection")
+                continue
+            else:
+                if int(menu_selection) > 3:
+                    print("That was an invalid selection")
+                    continue
+                else:
+                    menu_selection = int(menu_selection)
+                    os.system("cls")
+                if menu_selection == 1:
+                    print(self.df)
+                    input("Press enter to return")
+                    os.system("cls")
+                    return
+                elif menu_selection ==2:
+                    templist = []
+                    print(self.cdf.to_string)
+                    Courier_index = input("Which Courier would you like to see orders for, enter the index number: ")
+                    try:
+                        Courier_index = int(Courier_index)                        
+                    except:
+                        print("That Courier doesn't exit")
+                        continue
+                    else:
+                        for i in range(len(self.list)):
+                            if self.list[i]["courier"] == str(Courier_index):
+                                templist.append(self.list[i])
+                        print(pd.DataFrame(templist))
+                        input("Press enter to return")
+                        os.system("cls")
+                        return
+                elif menu_selection == 3:
+                    templist = []
+                    for i in range(len(status_list)):
+                        print(f"{i}: {status_list[i]}")
+                    status_index = input("Which status would you like to see orders for, enter the index number: ")
+                    try:
+                        status_index = int(status_index)                        
+                    except:
+                        print("That Courier doesn't exit")
+                        continue
+                    else:
+                        for i in range(len(self.list)):
+                            if self.list[i]["status"] == status_list[status_index]:
+                                templist.append(self.list[i])
+                        print(pd.DataFrame(templist).to_string())
+                        input("Press enter to return")
+                        os.system("cls")
+                        return
+                elif menu_selection == 0:
+                    return
+                        
+
+        
 
     def addorder(self):
         while True:
             order_dictionary = {}
+            productlist= []
             os.system("cls")
             order_dictionary["customer_name"] = input("Please enter the name of the customer: \n")
             order_dictionary["customer_address"] = input("Please enter the customers address: \n")
             order_dictionary["customer_phone"] = "#" + input("Please enter the customers phone number: \n")
-            for i in range(len(self.clist)):
-                print(f"{i}: {self.clist[i]}")
+            print(self.cdf.to_string())
             order_dictionary["courier"] = input("Please enter the index number for the courier to use: \n")
             order_dictionary["status"] = "preparing"
+            print(self.pdf.to_string())    
+            another_product = ""
+            while another_product != "y" and another_product != "n":
+                while True:
+                    product_index= input("Please enter the products in this order by index: \n")
+                    try:
+                        productlist.append(int(product_index))
+                    except:
+                        print("That was an invalid selction")
+                        continue    
+                    else:   
+                        another_product = input("Add another product: y or n:\n").lower()
+                        if another_product == "n":
+                            order_dictionary["product"] = (', '.join(str(x) for x in productlist))            
+                            break
             self.list.append(order_dictionary)
             os.system("cls")
+            orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product" ]
+            with open("e:\MiniProject\miniproject\source\orders.csv", "w") as ords:
+                writer = csv.DictWriter(ords, fieldnames=orders_fields)
+                writer.writeheader()
+                writer.writerows(self.list)
             self.df = pd.read_csv("e:\MiniProject\miniproject\source\orders.csv")
             print(self.df.to_string())
             another_product = ""
@@ -315,6 +441,7 @@ Orders Menu:
 
     def changeorder(self):
         print(self.df.to_string())
+        status_list = ["Preparing", "Out of the Oven", "On it's way", "Delivered"]
         while True:
             if len(self.list) <= 0:
                 print("There are no orders")
@@ -328,14 +455,25 @@ Orders Menu:
                 print("That order doesn't exit")
                 continue
             else:
-                self.list[orders_index]["status"] = input("What would you like to change this to?: ")
-                return list
+                while True:
+                    for i in range(len(status_list)):
+                        print(f"{i}: {status_list[i]}")
+                    status_index = input("Which order would you like to change, enter the index number: ")
+                    try:
+                        status_index = int(status_index)
+                        print(self.list[orders_index])
+                    except:
+                        print("That was an incavalid selection")
+                        continue
+                    else:
+                        self.list[orders_index]["status"] = status_list[status_index]
+                        return list
 
     def updateorder(self):
         print(self.df.to_string())
         while True:
             if len(self.list) <= 0:
-                print("There are no products")
+                print("There are no orders")
                 input("Press enter to continue")
                 return self.list
             orders_index = input("Which order details would you like to change, enter the index number: ")

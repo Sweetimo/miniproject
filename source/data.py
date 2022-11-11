@@ -5,16 +5,27 @@ import csv
 product = []
 orders = []
 couriers = []
-orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status"]
+orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
+product_fields = ["name", "price"]
+courier_fields = ["name", "phone"]
+
 
 # Opens the saved product data and adds it to be used in program
-with open("product.txt", "r") as prod:
-    for products in prod:
-        product.append(products.strip())
+try:
+    with open("product.csv", "r") as prod:
+        reader = csv.DictReader(prod)
+        product = list(reader)
 
-with open("courier.txt", "r") as cour:
-    for courier in cour:
-        couriers.append(courier.strip())
+except:
+    print("No product list found")
+
+try:
+    with open("courier.csv", "r") as cour:
+        reader = csv.DictReader(cour)
+        couriers = list(reader)
+
+except:
+    print("No courier list found")
 
 # Opens the saved order data and adds it to be used in program
 try:
@@ -25,14 +36,16 @@ try:
 except:
     print("No order list found")
 
-menu = functions.ProductMenu(product)
-order = functions.OrderMenu(orders, couriers)
-courier = functions.CourierMenu(couriers)
+
+
 
 # Main Loop for calling the menu
 while True:
     os.system("cls")
-    match functions.mainmenu():
+    menu = functions.ProductMenu(product)
+    courier = functions.CourierMenu(couriers)
+    order = functions.OrderMenu(orders, courier.list)
+    match functions.mainmenu():        
         case 1:
             os.system("cls")
             menu.menu()
@@ -49,13 +62,16 @@ while True:
             continue
 
 # Saves the product and order data to a file
-with open("product.txt", "w") as prod:
-    for products in menu.list:
-        prod.write(f"{products} \n")
 
-with open("courier.txt", "w") as cour:
-    for couriers in courier.list:
-        cour.write(f"{couriers} \n")
+with open("product.csv", "w") as prod:
+    writer = csv.DictWriter(prod, fieldnames=product_fields)
+    writer.writeheader()
+    writer.writerows(menu.list)
+
+with open("courier.csv", "w") as cour:
+    writer = csv.DictWriter(cour, fieldnames=courier_fields)
+    writer.writeheader()
+    writer.writerows(courier.list)
 
 with open("orders.csv", "w") as ords:
     writer = csv.DictWriter(ords, fieldnames=orders_fields)
