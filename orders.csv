@@ -1,11 +1,21 @@
-customer_name,customer_address,customer_phone,courier,status,product
-Imogen,"12 Maple drive, sk2 6jw",01614199709,,Out for delivery,
-Concerned Hubbs,99 park ave,000000000000,0,preparing,"1, 2, 1"
-Jimmy,99 jim street,0800411411,,preparing,
-hi,hi,000011111,,preparing,
-Jim,18 street,#01111111111,0,preparing,[0]
-jim,jim,#jim,0,preparing,"2, 1"
-Hauchefant Fortemps,1 Heavensward Ave,#0171818919,0,Delivered,2
-James,Jamey lanister lane,##3030303030303,0,preparing,"2, 1"
-Alec,Not starwars road,##1,0,preparing,"1, 2"
-lommy,p road,##01010101001,0,preparing,1
+customer_name,customer_address,customer_phone,courier,status,product
+
+Imogen,"12 Maple drive, sk2 6jw",01614199709,,Out for delivery,
+
+Concerned Hubbs,99 park ave,000000000000,0,Delivered,"1, 2, 1"
+
+Jimmy,99 jim street,0800411411,,preparing,
+
+hi,hi,000011111,,preparing,
+
+Jim,18 street,#01111111111,0,Out of the Oven,[0]
+
+jim,jim,#jim,0,preparing,"2, 1"
+
+Hauchefant Fortemps,1 Heavensward Ave,#0171818919,0,Delivered,2
+
+James,Jamey lanister lane,##3030303030303,0,preparing,"2, 1"
+
+Alec,Not starwars road,##1,0,Out of the Oven,"1, 2"
+
+lommy,p road,##01010101001,0,On it's way,1
