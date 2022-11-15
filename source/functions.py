@@ -173,10 +173,23 @@ Courier Menu:
 
             # Show Courier List
             if Courier_menu_selection == 1:
-                self.showlist()
+                self.showlist(self.cdf)
             # Add Courier
             elif Courier_menu_selection == 2:
-                self.addCourier()
+                while True:
+                    
+                    name = input("Please enter the names of the courier: \n")
+                    phone ="#" + input("What is their phone number: \n")
+                    
+                    self.addCourier(self.list, name, phone)
+                    courier_fields = ["name", "phone"]
+                    another_Courier = ""
+                    while another_Courier != "y" and another_Courier != "n":
+                        another_Courier = input("Add another Courier: y or n:\n").lower()
+                    if another_Courier == "n":
+                        os.system("cls")
+                        break
+                
 
             # Update Courier
             elif Courier_menu_selection == 3:
@@ -184,7 +197,21 @@ Courier Menu:
 
             # Delete Courier
             elif Courier_menu_selection == 4:
-                self.deleteCourier()
+                print(self.cdf.to_string())
+                while True:
+                    if len(self.list) <= 0:
+                        print("There are no Couriers")
+                        input("Press enter to continue")
+                        return self.list
+                    Courier_index = input("Which Courier would you like to delete, enter the index number: ")
+                    try:
+                        Courier_index = int(Courier_index)
+                        print(f"{self.list[Courier_index]} has been removed")
+                    except:
+                        print("That Courier doesn't exit")
+                        continue
+                    else:
+                        self.deleteCourier(self.list, Courier_index)
 
             elif Courier_menu_selection == 0:
                 courier_fields = ["name", "phone"]
@@ -195,29 +222,24 @@ Courier Menu:
                 self.cdf = pd.read_csv("courier.csv")
                 break
 
-    def showlist(self):
-        print(self.cdf.to_string())
+    def showlist(self, df):
+        print(df)
         input("Press enter to return")
         os.system("cls")
 
-    def addCourier(self):
+    def addCourier(self, list, name, phone):
         while True:
             courier_dictionary = {}
-            courier_dictionary["name"] = input("Please enter the names of the courier: \n")
-            courier_dictionary["phone"] ="#" + input("What is their phone number: \n")
-            self.list.append(courier_dictionary)
+            courier_dictionary["name"] = name
+            courier_dictionary["phone"] = phone
+            list.append(courier_dictionary)
             courier_fields = ["name", "phone"]
             with open("courier.csv", "w") as cour:
                 writer = csv.DictWriter(cour, fieldnames=courier_fields)
                 writer.writeheader()
                 writer.writerows(self.list)
             self.cdf = pd.read_csv("courier.csv")
-            another_Courier = ""
-            while another_Courier != "y" and another_Courier != "n":
-                another_Courier = input("Add another Courier: y or n:\n").lower()
-            if another_Courier == "n":
-                os.system("cls")
-                return list
+            return list
 
     def changeCourier(self):
         print(self.cdf.to_string())
@@ -241,23 +263,10 @@ Courier Menu:
                         self.list[Courier_index][keys] = update
                 return list
 
-    def deleteCourier(self):
-        print(self.cdf.to_string())
-        while True:
-            if len(self.list) <= 0:
-                print("There are no Couriers")
-                input("Press enter to continue")
-                return self.list
-            Courier_index = input("Which Courier would you like to delete, enter the index number: ")
-            try:
-                Courier_index = int(Courier_index)
-                print(f"{self.list[Courier_index]} has been removed")
-            except:
-                print("That Courier doesn't exit")
-                continue
-            else:
-                del self.list[Courier_index]
-                return self.list
+    def deleteCourier(self, list, courier_index):
+
+                del list[courier_index]
+                return list
 
 
 
@@ -310,7 +319,39 @@ Orders Menu:
                 self.showlist()
             # Add Order
             elif menu_selection == 2:
-                self.addorder()
+                while True:
+                    productlist= []
+                    os.system("cls")
+                    name = input("Please enter the name of the customer: \n")
+                    address = input("Please enter the customers address: \n")
+                    phone = "#" + input("Please enter the customers phone number: \n")
+                    print(self.cdf.to_string())
+                    cour = input("Please enter the index number for the courier to use: \n")
+                    
+                    print(self.pdf.to_string())    
+                    
+                    while True:
+                        product_index= input("Please enter the products in this order by index: \n")
+                        try:
+                            productlist.append(int(product_index))
+                        except:
+                            print("That was an invalid selction")
+                            continue    
+                        else:
+                            another_product = ""
+                            while another_product != "y" and another_product != "n":   
+                                another_product = input("Add another product: y or n:\n").lower()
+                            if another_product == "n":                                        
+                                break
+
+                    self.addorder(self.list,name, address, phone, cour, productlist)
+                    another_order = ""
+                    while another_order != "y" and another_order != "n":
+                        another_order = input("Add another order: y or n:\n").lower()
+                    if another_order == "n":
+                        os.system("cls")
+                        break
+                        
 
             # Update Update order status
             elif menu_selection == 3:
@@ -397,32 +438,17 @@ Orders Menu:
 
         
 
-    def addorder(self):
+    def addorder(self,list,cname,caddress,cphone,cour,cproduct):
         while True:
             order_dictionary = {}
-            productlist= []
             os.system("cls")
-            order_dictionary["customer_name"] = input("Please enter the name of the customer: \n")
-            order_dictionary["customer_address"] = input("Please enter the customers address: \n")
-            order_dictionary["customer_phone"] = "#" + input("Please enter the customers phone number: \n")
-            print(self.cdf.to_string())
-            order_dictionary["courier"] = input("Please enter the index number for the courier to use: \n")
+            order_dictionary["customer_name"] = cname
+            order_dictionary["customer_address"] = caddress
+            order_dictionary["customer_phone"] = "#" + cphone
+            order_dictionary["courier"] = cour
             order_dictionary["status"] = "preparing"
-            print(self.pdf.to_string())    
-            another_product = ""
-            while another_product != "y" and another_product != "n":
-                while True:
-                    product_index= input("Please enter the products in this order by index: \n")
-                    try:
-                        productlist.append(int(product_index))
-                    except:
-                        print("That was an invalid selction")
-                        continue    
-                    else:   
-                        another_product = input("Add another product: y or n:\n").lower()
-                        if another_product == "n":
-                            order_dictionary["product"] = (', '.join(str(x) for x in productlist))            
-                            break
+            order_dictionary["product"] = (', '.join(str(x) for x in cproduct))        
+                       
             self.list.append(order_dictionary)
             os.system("cls")
             orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product" ]
@@ -432,12 +458,7 @@ Orders Menu:
                 writer.writerows(self.list)
             self.df = pd.read_csv("e:\MiniProject\miniproject\source\orders.csv")
             print(self.df.to_string())
-            another_product = ""
-            while another_product != "y" and another_product != "n":
-                another_product = input("Add another order: y or n:\n").lower()
-            if another_product == "n":
-                os.system("cls")
-                return list
+            return list
 
     def changeorder(self):
         print(self.df.to_string())
@@ -497,15 +518,15 @@ Orders Menu:
         print(self.df.to_string())
         while True:
             if len(self.list) <= 0:
-                print("There are no products")
+                print("There are no Orders")
                 input("Press enter to continue")
                 return self.list
-            prod_index = input("Which product would you like to delete, enter the index number: ")
+            prod_index = input("Which order would you like to delete, enter the index number: ")
             try:
                 prod_index = int(prod_index)
                 print(f"{self.list[prod_index]} has been removed")
             except:
-                print("That product doesn't exit")
+                print("That order doesn't exit")
                 continue
             else:
                 del self.list[prod_index]
