@@ -8,17 +8,13 @@ class ProductMenu():
 
     def __init__(self, product):
         self.list = product
-        self.pdf = pd.read_csv("product.csv")
+        
 
     def menu(self):
 
         while True:
-            product_fields = ["name", "price"]
-            with open("product.csv", "w") as prod:
-                writer = csv.DictWriter(prod, fieldnames=product_fields)
-                writer.writeheader()
-                writer.writerows(self.list)
-            self.pdf = pd.read_csv("product.csv")
+            
+            self.pdf = pd.DataFrame(self.list)
             print("""
 Product Menu:
 0. Return to main menu.
@@ -55,11 +51,8 @@ Product Menu:
                     
                     self.list = self.addproduct(self.list, name, price)
                     product_fields = ["name", "price"]
-                    with open("product.csv", "w") as prod:
-                        writer = csv.DictWriter(prod, fieldnames=product_fields)
-                        writer.writeheader()
-                        writer.writerows(self.list)
-                    self.pdf = pd.read_csv("product.csv")
+                    
+                    self.pdf = pd.DataFrame(self.list)
                     os.system("cls")
                     print(self.pdf.to_string())
                     another_product = ""
@@ -121,7 +114,7 @@ Product Menu:
                     writer = csv.DictWriter(prod, fieldnames=product_fields)
                     writer.writeheader()
                     writer.writerows(self.list)
-                self.pdf = pd.read_csv("product.csv")
+                
                 break
 
     def showlist(self,df):
@@ -131,18 +124,13 @@ Product Menu:
 
     def addproduct(self,list, name, price):
         while True:
-            os.system("cls")
+            
             product_dictionary = {}
             product_dictionary["name"] = name
             product_dictionary["price"] = price
             list.append(product_dictionary)
-            product_fields = ["name", "price"]
-            with open("product.csv", "w") as prod:
-                writer = csv.DictWriter(prod, fieldnames=product_fields)
-                writer.writeheader()
-                writer.writerows(self.list)
-            self.pdf = pd.read_csv("product.csv")
-            os.system("cls")
+            self.pdf = pd.DataFrame(self.list)
+            
             return list
 
     def changeproduct(self,list,prod_index,keys,update):
@@ -159,17 +147,14 @@ class CourierMenu():
 
     def __init__(self, Courier):
         self.list = Courier
-        self.cdf = pd.read_csv("courier.csv")
+        self.cdf = pd.DataFrame(self.list)
 
     def menu(self):
 
         while True:
             courier_fields = ["name", "phone"]
-            with open("courier.csv", "w") as cour:
-                writer = csv.DictWriter(cour, fieldnames=courier_fields)
-                writer.writeheader()
-                writer.writerows(self.list)
-            self.cdf = pd.read_csv("courier.csv")
+            
+            self.cdf = pd.DataFrame(self.list)
             print("""
 Courier Menu:
 0. Return to main menu.
@@ -243,7 +228,7 @@ Courier Menu:
                     if len(self.list) <= 0:
                         print("There are no Couriers")
                         input("Press enter to continue")
-                        return self.list
+                        break
                     Courier_index = input("Which Courier would you like to delete, enter the index number: ")
                     try:
                         Courier_index = int(Courier_index)
@@ -261,7 +246,7 @@ Courier Menu:
                     writer = csv.DictWriter(cour, fieldnames=courier_fields)
                     writer.writeheader()
                     writer.writerows(self.list)
-                self.cdf = pd.read_csv("courier.csv")
+                self.cdf = pd.DataFrame(self.list)
                 break
 
     def showlist(self, df):
@@ -275,12 +260,8 @@ Courier Menu:
             courier_dictionary["name"] = name
             courier_dictionary["phone"] = phone
             list.append(courier_dictionary)
-            courier_fields = ["name", "phone"]
-            with open("courier.csv", "w") as cour:
-                writer = csv.DictWriter(cour, fieldnames=courier_fields)
-                writer.writeheader()
-                writer.writerows(self.list)
-            self.cdf = pd.read_csv("courier.csv")
+            
+            self.cdf = pd.DataFrame(self.list)
             return list
 
     def changeCourier(self, list, Courier_index, keys, update):
@@ -297,23 +278,20 @@ Courier Menu:
 # Class that handles the order menu
 class OrderMenu():
 
-    def __init__(self, order, courier):
+    def __init__(self, order, courier, product):
         self.list = order
         self.clist = courier
-        self.pdf = pd.read_csv("product.csv")
-        self.cdf = pd.read_csv("courier.csv")
-        self.df = pd.read_csv("orders.csv")
+        self.plist = product
+        self.pdf = pd.DataFrame(self.plist)
+        self.cdf = pd.DataFrame(self.clist)
+        self.df = pd.DataFrame(self.list)
 
     def menu(self):
         while True:
-            orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
-            with open("orders.csv", "w") as ords:
-                writer = csv.DictWriter(ords, fieldnames=orders_fields)
-                writer.writeheader()
-                writer.writerows(self.list)
-            self.df = pd.read_csv("orders.csv")
-            self.pdf = pd.read_csv("product.csv")
-            self.cdf = pd.read_csv("courier.csv")
+            
+            self.df = pd.DataFrame(self.list)
+            self.pdf = pd.DataFrame(self.plist)
+            self.cdf = pd.DataFrame(self.clist)
             print("""
 Orders Menu:
 0. Return to main menu.
@@ -433,11 +411,7 @@ Orders Menu:
                                 if update != "":
                                     self.list = self.updateorder(self.list, orders_index, keys, update)
                         orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
-                        with open("orders.csv", "w") as ords:
-                            writer = csv.DictWriter(ords, fieldnames=orders_fields)
-                            writer.writeheader()
-                            writer.writerows(self.list)
-                        self.df = pd.read_csv("orders.csv")
+                        self.df = pd.DataFrame(self.list)
                         break
 
             # Delete Order
@@ -461,6 +435,11 @@ Orders Menu:
                         break
 
             elif menu_selection == 0:
+                orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
+                with open("orders.csv", "w") as ords:
+                    writer = csv.DictWriter(ords, fieldnames=orders_fields)
+                    writer.writeheader()
+                    writer.writerows(self.list)
                 break
 
     def showlist(self):
@@ -536,7 +515,7 @@ Orders Menu:
     def addorder(self,list,cname,caddress,cphone,cour,cproduct):
         while True:
             order_dictionary = {}
-            os.system("cls")
+            
             order_dictionary["customer_name"] = cname
             order_dictionary["customer_address"] = caddress
             order_dictionary["customer_phone"] = "#" + cphone
@@ -545,14 +524,7 @@ Orders Menu:
             order_dictionary["product"] = (', '.join(str(x) for x in cproduct))        
                        
             list.append(order_dictionary)
-            os.system("cls")
-            orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product" ]
-            with open("orders.csv", "w") as ords:
-                writer = csv.DictWriter(ords, fieldnames=orders_fields)
-                writer.writeheader()
-                writer.writerows(self.list)
-            self.df = pd.read_csv("orders.csv")
-            print(self.df.to_string())
+            
             return list
 
     def changeorder(self,list,orders_index, status_index):

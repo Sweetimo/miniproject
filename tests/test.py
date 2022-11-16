@@ -5,7 +5,7 @@ product = []
 order = []
 courier = functions.CourierMenu(couriers)
 products = functions.ProductMenu(product)
-orders = functions.OrderMenu(order, couriers)
+orders = functions.OrderMenu(order, couriers, product)
 
 
 def test_products_addproduct():

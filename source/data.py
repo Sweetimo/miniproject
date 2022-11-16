@@ -44,7 +44,7 @@ while True:
     os.system("cls")
     menu = functions.ProductMenu(product)
     courier = functions.CourierMenu(couriers)
-    order = functions.OrderMenu(orders, courier.list)
+    order = functions.OrderMenu(orders, courier.list, menu.list)
     match functions.mainmenu():        
         case 1:
             os.system("cls")
