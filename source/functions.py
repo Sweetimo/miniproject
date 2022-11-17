@@ -109,7 +109,7 @@ Product Menu:
                     
 
             elif product_menu_selection == 0:
-                product_fields = ["name", "price"]
+                product_fields = ["id","name", "price"]
                 with open("product.csv", "w") as prod:
                     writer = csv.DictWriter(prod, fieldnames=product_fields)
                     writer.writeheader()
@@ -126,6 +126,7 @@ Product Menu:
         while True:
             
             product_dictionary = {}
+            product_dictionary["id"] = len(list) + 1
             product_dictionary["name"] = name
             product_dictionary["price"] = price
             list.append(product_dictionary)
@@ -241,7 +242,7 @@ Courier Menu:
                         break
 
             elif Courier_menu_selection == 0:
-                courier_fields = ["name", "phone"]
+                courier_fields = ["id","name", "phone"]
                 with open("courier.csv", "w") as cour:
                     writer = csv.DictWriter(cour, fieldnames=courier_fields)
                     writer.writeheader()
@@ -257,6 +258,7 @@ Courier Menu:
     def addCourier(self, list, name, phone):
         while True:
             courier_dictionary = {}
+            courier_dictionary["id"] = len(list) + 1
             courier_dictionary["name"] = name
             courier_dictionary["phone"] = phone
             list.append(courier_dictionary)

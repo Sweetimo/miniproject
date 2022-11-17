@@ -1,4 +1,5 @@
-name,price
-Coke,9.99
-diet coke,0.99
-tea,1.50
+id,name,price
+,Coke,9.99
+,diet coke,0.99
+,tea,1.50
+4,Okonomiyaki,4.99

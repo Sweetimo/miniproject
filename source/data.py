@@ -6,8 +6,8 @@ product = []
 orders = []
 couriers = []
 orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
-product_fields = ["name", "price"]
-courier_fields = ["name", "phone"]
+product_fields = ["id","name", "price"]
+courier_fields = ["id","name", "phone"]
 
 
 # Opens the saved product data and adds it to be used in program
@@ -15,6 +15,7 @@ try:
     with open("product.csv", "r") as prod:
         reader = csv.DictReader(prod)
         product = list(reader)
+        
 
 except:
     print("No product list found")
@@ -32,6 +33,7 @@ try:
     with open("orders.csv", "r") as ords:
         reader = csv.DictReader(ords)
         orders = list(reader)
+   
 
 except:
     print("No order list found")
