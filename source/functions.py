@@ -1,20 +1,25 @@
 import os
 import csv
 import pandas as pd
+import sqlalchemy as db
+
+mydb = db.create_engine("mysql://root:password@localhost/miniproject")
+meta = db.MetaData()
 
 
 # Class that handles the project menu
 class ProductMenu():
 
-    def __init__(self, product):
-        self.list = product
-        
+    def __init__(self):
+
+        self.pdf = pd.read_sql('SELECT * FROM products', con=mydb)
+        self.list = self.pdf.to_dict("records")
 
     def menu(self):
 
         while True:
             
-            self.pdf = pd.DataFrame(self.list)
+
             print("""
 Product Menu:
 0. Return to main menu.
@@ -40,7 +45,10 @@ Product Menu:
 
             # Show Product List
             if product_menu_selection == 1:
-                self.showlist(self.pdf)
+
+                self.pdf = pd.read_sql('SELECT * FROM products', con=mydb)
+                print(self.pdf)
+
             # Add Product
             elif product_menu_selection == 2:
                 while True:
@@ -50,9 +58,9 @@ Product Menu:
                     price = input("How much does that cost: \n")
                     
                     self.list = self.addproduct(self.list, name, price)
-                    product_fields = ["name", "price"]
-                    
+
                     self.pdf = pd.DataFrame(self.list)
+                    self.pdf.to_sql("products", mydb, index=False, if_exists="replace")
                     os.system("cls")
                     print(self.pdf.to_string())
                     another_product = ""
@@ -86,6 +94,8 @@ Product Menu:
                             update = input(f"{keys} What would you like to change this to?\n")
                             if update != "":
                                 self.list = self.changeproduct(self.list,prod_index,keys,update )
+                        self.pdf = pd.DataFrame(self.list)
+                        self.pdf.to_sql("products", mydb,index = False, if_exists="replace")
                         break
 
             # Delete Product
@@ -105,19 +115,18 @@ Product Menu:
                         continue
                     else:
                         self.list = self.deleteproduct(self.list, prod_index)
+                        self.pdf = pd.DataFrame(self.list)
+                        self.pdf.to_sql("products", mydb, index=False, if_exists="replace")
                         break
                     
 
             elif product_menu_selection == 0:
-                product_fields = ["id","name", "price"]
-                with open("product.csv", "w") as prod:
-                    writer = csv.DictWriter(prod, fieldnames=product_fields)
-                    writer.writeheader()
-                    writer.writerows(self.list)
+                self.pdf = pd.DataFrame(self.list)
+                self.pdf.to_sql("products", mydb, index=False, if_exists="replace")
                 
                 break
 
-    def showlist(self,df):
+    def showlist(self, df):
         print(df)
         input("Press enter to return")
         os.system("cls")
@@ -130,7 +139,7 @@ Product Menu:
             product_dictionary["name"] = name
             product_dictionary["price"] = price
             list.append(product_dictionary)
-            self.pdf = pd.DataFrame(self.list)
+
             
             return list
 
@@ -146,16 +155,16 @@ Product Menu:
 
 class CourierMenu():
 
-    def __init__(self, Courier):
-        self.list = Courier
-        self.cdf = pd.DataFrame(self.list)
+    def __init__(self):
+        self.cdf = pd.read_sql('SELECT * FROM couriers', con=mydb)
+        self.list = self.cdf.to_dict("records")
 
     def menu(self):
 
         while True:
-            courier_fields = ["name", "phone"]
+
             
-            self.cdf = pd.DataFrame(self.list)
+
             print("""
 Courier Menu:
 0. Return to main menu.
@@ -190,6 +199,8 @@ Courier Menu:
                     phone ="#" + input("What is their phone number: \n")
                     
                     self.list = self.addCourier(self.list, name, phone)
+                    self.cdf = pd.DataFrame(self.list)
+                    self.cdf.to_sql("couriers", mydb, index=False, if_exists="replace")
                     
                     another_Courier = ""
                     while another_Courier != "y" and another_Courier != "n":
@@ -220,6 +231,8 @@ Courier Menu:
                             update = input(f"{keys} What would you like to change this to?\n")
                             if update != "":
                                self.list = self.changeCourier(self.list,Courier_index,keys,update)
+                        self.cdf = pd.DataFrame(self.list)
+                        self.cdf.to_sql("couriers", mydb, index=False, if_exists="replace")
                         break
 
             # Delete Courier
@@ -239,15 +252,13 @@ Courier Menu:
                         continue
                     else:
                         self.list = self.deleteCourier(self.list, Courier_index)
+                        self.cdf = pd.DataFrame(self.list)
+                        self.cdf.to_sql("couriers", mydb, index=False, if_exists="replace")
                         break
 
             elif Courier_menu_selection == 0:
-                courier_fields = ["id","name", "phone"]
-                with open("courier.csv", "w") as cour:
-                    writer = csv.DictWriter(cour, fieldnames=courier_fields)
-                    writer.writeheader()
-                    writer.writerows(self.list)
                 self.cdf = pd.DataFrame(self.list)
+                self.cdf.to_sql("couriers", mydb, index=False, if_exists="replace")
                 break
 
     def showlist(self, df):
@@ -280,12 +291,12 @@ Courier Menu:
 # Class that handles the order menu
 class OrderMenu():
 
-    def __init__(self, order, courier, product):
+    def __init__(self, order):
         self.list = order
-        self.clist = courier
-        self.plist = product
-        self.pdf = pd.DataFrame(self.plist)
-        self.cdf = pd.DataFrame(self.clist)
+        self.pdf = pd.read_sql('SELECT * FROM products', con=mydb)
+        self.plist = self.pdf.to_dict("records")
+        self.cdf = pd.read_sql('SELECT * FROM couriers', con=mydb)
+        self.clist = self.cdf.to_dict("records")
         self.df = pd.DataFrame(self.list)
 
     def menu(self):
@@ -523,7 +534,12 @@ Orders Menu:
             order_dictionary["customer_phone"] = "#" + cphone
             order_dictionary["courier"] = cour
             order_dictionary["status"] = "preparing"
-            order_dictionary["product"] = (', '.join(str(x) for x in cproduct))        
+            order_dictionary["product"] = (', '.join(str(x) for x in cproduct))       
+            
+
+            for x in cproduct:
+                product = ", ".join(str(x))
+                order_dictionary
                        
             list.append(order_dictionary)
             
