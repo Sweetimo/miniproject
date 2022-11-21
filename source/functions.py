@@ -5,7 +5,9 @@ import sqlalchemy as db
 
 mydb = db.create_engine("mysql://root:password@localhost/miniproject")
 meta = db.MetaData()
-
+status_list = [{"id": "1", "status" : "preparing"},{"id":"2", "status" : "out of the oven"},{"id":"3", "status": "out for delivery"},{"id":"4", "status": "delivered"}]
+df = pd.DataFrame(status_list)
+df.to_sql("status", mydb,index = False, if_exists="replace")
 
 # Class that handles the project menu
 class ProductMenu():
@@ -81,7 +83,7 @@ Product Menu:
                         print("There are no products")
                         input("Press enter to continue")
                         break
-                    prod_index = input("Which product would you like to change, enter the index number: ")
+                    prod_index = input("Which product would you like to change, enter the id number: ")
                     try:
                         prod_index = int(prod_index)
                         print(list[prod_index])
@@ -106,9 +108,9 @@ Product Menu:
                         print("There are no products")
                         input("Press enter to continue")
                         break
-                    prod_index = input("Which product would you like to delete, enter the index number: ")
+                    prod_index = input("Which product would you like to delete, enter the id number: ")
                     try:
-                        prod_index = int(prod_index)
+                        prod_index = int(prod_index) -1
                         print(f"{self.list[prod_index]} has been removed")
                     except:
                         print("That product doesn't exit")
@@ -218,9 +220,9 @@ Courier Menu:
                         print("There are no Couriers")
                         input("Press enter to continue")
                         break
-                    Courier_index = input("Which Courier would you like to change, enter the index number: ")
+                    Courier_index = input("Which Courier would you like to change, enter the id number: ")
                     try:
-                        Courier_index = int(Courier_index)
+                        Courier_index = int(Courier_index) -1
                         print(list[Courier_index])
                     except:
                         print("That Courier doesn't exit")
@@ -243,9 +245,9 @@ Courier Menu:
                         print("There are no Couriers")
                         input("Press enter to continue")
                         break
-                    Courier_index = input("Which Courier would you like to delete, enter the index number: ")
+                    Courier_index = input("Which Courier would you like to delete, enter the id number: ")
                     try:
-                        Courier_index = int(Courier_index)
+                        Courier_index = int(Courier_index) -1
                         print(f"{self.list[Courier_index]} has been removed")
                     except:
                         print("That Courier doesn't exit")
@@ -291,14 +293,16 @@ Courier Menu:
 # Class that handles the order menu
 class OrderMenu():
 
-    def __init__(self, order):
-        self.list = order
+    def __init__(self):
+        self.df = pd.read_sql('SELECT * FROM orders', con=mydb)
+        self.list = self.df.to_dict("records")
         self.pdf = pd.read_sql('SELECT * FROM products', con=mydb)
         self.plist = self.pdf.to_dict("records")
         self.cdf = pd.read_sql('SELECT * FROM couriers', con=mydb)
         self.clist = self.cdf.to_dict("records")
-        self.df = pd.DataFrame(self.list)
-
+        self.sdf = pd.read_sql('SELECT * FROM status', con=mydb)
+        self.slist = self.sdf.to_dict("records")
+        
     def menu(self):
         while True:
             
@@ -346,9 +350,9 @@ Orders Menu:
                     print(self.pdf.to_string())    
                     
                     while True:
-                        product_index= input("Please enter the products in this order by index: \n")
+                        product_index= input("Please enter the products in this order by id: \n")
                         try:
-                            productlist.append(int(product_index))
+                            productlist.append(int(product_index) - 1)
                         except:
                             print("That was an invalid selction")
                             continue    
@@ -360,6 +364,8 @@ Orders Menu:
                                 break
 
                     self.list = self.addorder(self.list,name, address, phone, cour, productlist)
+                    self.df = pd.DataFrame(self.list)
+                    self.df.to_sql("orders", mydb, index=False, if_exists="replace")
                     another_order = ""
                     while another_order != "y" and another_order != "n":
                         another_order = input("Add another order: y or n:\n").lower()
@@ -371,32 +377,33 @@ Orders Menu:
             # Update Update order status
             elif menu_selection == 3:
                 while True:
-                    status_list = ["Preparing", "Out of the Oven", "On it's way", "Delivered"]
+                    status_list = ["1", "2", "3", "4"]
                     if len(self.list) <= 0:
                         print("There are no orders")
                         input("Press enter to continue")
                         break
                     print(self.df.to_string())
-                    orders_index = input("Which order would you like to change, enter the index number: ")
+                    orders_index = input("Which order would you like to change, enter the id number: ")
                     try:
-                        orders_index = int(orders_index)
+                        orders_index = int(orders_index) 
                         print(self.list[orders_index])
                     except:
                         print("That order doesn't exit")
                         continue
                     else:
                         while True:
-                            for i in range(len(status_list)):
-                                print(f"{i}: {status_list[i]}")
-                            status_index = input("What would you like to change status to, enter the index number: ")
+                            print(self.sdf)
+                            status_index = input("What would you like to change status to, enter the id number: ")
                             try:
-                                status_index = int(status_index)
+                                status_index = int(status_index) 
                                 print(self.list[orders_index])
                             except:
                                 print("That was an invalid selection")
                                 continue
                             else:
                                 self.list = self.changeorder(self.list,orders_index,status_index)
+                                self.df = pd.DataFrame(self.list)
+                                self.df.to_sql("orders", mydb, index=False, if_exists="replace")
                                 break
                         break
 
@@ -409,9 +416,9 @@ Orders Menu:
                         print("There are no orders")
                         input("Press enter to continue")
                         break
-                    orders_index = input("Which order details would you like to change, enter the index number: ")
+                    orders_index = input("Which order details would you like to change, enter the id number: ")
                     try:
-                        orders_index = int(orders_index)
+                        orders_index = int(orders_index) -1
                         print(self.list[orders_index])
                     except:
                         print("That order doesn't exit")
@@ -423,8 +430,8 @@ Orders Menu:
                                 update = input(f"{keys} What would you like to change this to?\n")
                                 if update != "":
                                     self.list = self.updateorder(self.list, orders_index, keys, update)
-                        orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
                         self.df = pd.DataFrame(self.list)
+                        self.df.to_sql("orders", mydb, index=False, if_exists="replace")
                         break
 
             # Delete Order
@@ -435,9 +442,9 @@ Orders Menu:
                         print("There are no Orders")
                         input("Press enter to continue")
                         break
-                    prod_index = input("Which order would you like to delete, enter the index number: ")
+                    prod_index = input("Which order would you like to delete, enter the id number: ")
                     try:
-                        prod_index = int(prod_index)
+                        prod_index = int(prod_index) -1
                         
                     except:
                         print("That order doesn't exit")
@@ -445,18 +452,17 @@ Orders Menu:
                     else:
                         input(f"{self.list[prod_index]} has been removed")
                         self.list = self.deleteorder(self.list, prod_index)
+                        self.df = pd.DataFrame(self.list)
+                        self.df.to_sql("orders", mydb, index=False, if_exists="replace")
                         break
 
             elif menu_selection == 0:
-                orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
-                with open("orders.csv", "w") as ords:
-                    writer = csv.DictWriter(ords, fieldnames=orders_fields)
-                    writer.writeheader()
-                    writer.writerows(self.list)
+                self.df = pd.DataFrame(self.list)
+                self.df.to_sql("orders", mydb, index=False, if_exists="replace")
                 break
 
     def showlist(self):
-        status_list = ["preparing", "Out of the Oven", "On it's way", "Delivered"]        
+        status_list = ["1", "2", "3", "4"]    
         while True:
             print("""
 Orders Menu:
@@ -487,9 +493,9 @@ Orders Menu:
                 elif menu_selection ==2:
                     templist = []
                     print(self.cdf.to_string)
-                    Courier_index = input("Which Courier would you like to see orders for, enter the index number: ")
+                    Courier_index = input("Which Courier would you like to see orders for, enter the id number: ")
                     try:
-                        Courier_index = int(Courier_index)                        
+                        Courier_index = int(Courier_index) - 1                       
                     except:
                         print("That Courier doesn't exit")
                         continue
@@ -507,7 +513,7 @@ Orders Menu:
                         print(f"{i}: {status_list[i]}")
                     status_index = input("Which status would you like to see orders for, enter the index number: ")
                     try:
-                        status_index = int(status_index)                        
+                        status_index = int(status_index) - 1                        
                     except:
                         print("That Courier doesn't exit")
                         continue
@@ -528,12 +534,12 @@ Orders Menu:
     def addorder(self,list,cname,caddress,cphone,cour,cproduct):
         while True:
             order_dictionary = {}
-            
+            order_dictionary["id"] = len(order_dictionary) + 1
             order_dictionary["customer_name"] = cname
             order_dictionary["customer_address"] = caddress
             order_dictionary["customer_phone"] = "#" + cphone
             order_dictionary["courier"] = cour
-            order_dictionary["status"] = "preparing"
+            order_dictionary["status"] = "1"
             order_dictionary["product"] = (', '.join(str(x) for x in cproduct))       
             
 
@@ -546,7 +552,7 @@ Orders Menu:
             return list
 
     def changeorder(self,list,orders_index, status_index):
-            status_list = ["Preparing", "Out of the Oven", "On it's way", "Delivered"]
+            status_list = ["1", "2", "3", "4"]
             list[orders_index]["status"] = status_list[status_index]
             
             return list

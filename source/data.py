@@ -3,9 +3,7 @@ import functions
 import csv
 
 
-orders = []
 
-orders_fields = ["customer_name", "customer_address", "customer_phone", "courier", "status", "product"]
 
 
 
@@ -27,7 +25,7 @@ while True:
     os.system("cls")
     menu = functions.ProductMenu()
     courier = functions.CourierMenu()
-    order = functions.OrderMenu(orders)
+    order = functions.OrderMenu()
     match functions.mainmenu():        
         case 1:
             os.system("cls")
@@ -44,10 +42,6 @@ while True:
             input("I didn't get that, press enter to continue")
             continue
 
-# Saves the product and order data to a file
 
 
-with open("orders.csv", "w") as ords:
-    writer = csv.DictWriter(ords, fieldnames=orders_fields)
-    writer.writeheader()
-    writer.writerows(order.list)
+
