@@ -352,7 +352,7 @@ Orders Menu:
                     while True:
                         product_index= input("Please enter the products in this order by id: \n")
                         try:
-                            productlist.append(int(product_index) - 1)
+                            productlist.append(int(product_index))
                         except:
                             print("That was an invalid selction")
                             continue    
@@ -395,7 +395,7 @@ Orders Menu:
                             print(self.sdf)
                             status_index = input("What would you like to change status to, enter the id number: ")
                             try:
-                                status_index = int(status_index) 
+                                status_index = int(status_index) - 1
                                 print(self.list[orders_index])
                             except:
                                 print("That was an invalid selection")
@@ -534,7 +534,7 @@ Orders Menu:
     def addorder(self,list,cname,caddress,cphone,cour,cproduct):
         while True:
             order_dictionary = {}
-            order_dictionary["id"] = len(order_dictionary) + 1
+            order_dictionary["id"] = len(list) + 1
             order_dictionary["customer_name"] = cname
             order_dictionary["customer_address"] = caddress
             order_dictionary["customer_phone"] = "#" + cphone
